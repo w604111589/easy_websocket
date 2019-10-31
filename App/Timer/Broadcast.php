@@ -34,4 +34,17 @@ class Broadcast
             }
         });
     }
+
+    public static function setTimerForBroadcastPerFive1(\swoole_websocket_server $server,int $timeSpace)
+    {
+        //时间间隔是以毫秒为单位
+        Timer::getInstance()->loop($timeSpace, function () use ($server) {
+            foreach ($server->connections as $fd) {
+                // 需要先判断是否是正确的websocket连接，否则有可能会push失败
+                if ($server->isEstablished($fd)) {
+                    $server->push($fd, "I'm a chinese");
+                }
+            }
+        });
+    }
 }
